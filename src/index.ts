@@ -1,4 +1,3 @@
-//test
 import { config } from '../config.js';
 
 export default {
@@ -56,6 +55,14 @@ export default {
 
       // Fetch the source page content
       let source = await fetch(`${domainSource}${url.pathname}`);
+      
+      // Remove "X-Robots-Tag" from the headers
+      const sourceHeaders = new Headers(source.headers);
+      sourceHeaders.delete('X-Robots-Tag');
+      source = new Response(source.body, {
+        status: source.status,
+        headers: sourceHeaders
+      });
 
       const metadata = await requestMetadata(url.pathname, patternConfig.metaDataEndpoint);
       console.log("Metadata fetched:", metadata);
